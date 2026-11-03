@@ -551,6 +551,17 @@ function assignDefaultsAndValidate(
   ;(result as NextConfigComplete).experimental.turbopackGcOptions =
     turbopackGcOptions
 
+  // Normalize imgOptSafeImageOptimization: boolean | { nextImage?,
+  // imageResponse? } into a resolved object. `true` enables every feature.
+  const safeImgOpt = result.experimental.imgOptSafeImageOptimization
+  ;(result as NextConfigComplete).experimental.imgOptSafeImageOptimization =
+    typeof safeImgOpt === 'object'
+      ? {
+          nextImage: safeImgOpt.nextImage ?? true,
+          imageResponse: safeImgOpt.imageResponse ?? false,
+        }
+      : { nextImage: !!safeImgOpt, imageResponse: !!safeImgOpt }
+
   // Normalize experimental.browserDebugInfoInTerminal to logging.browserToTerminal
   if (
     result.logging !== false &&
